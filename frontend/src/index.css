@@ -915,6 +915,17 @@ input:focus, select:focus {
   background: rgba(42, 36, 32, 0.9);
 }
 
+.photo-viewer:fullscreen {
+  background: var(--photo-bg);
+  width: 100vw;
+  height: 100vh;
+}
+
+.photo-viewer:fullscreen .photo-viewer-container {
+  width: 100%;
+  height: 100%;
+}
+
 /* === Navigation Controls === */
 .navigation-controls {
   display: flex;
@@ -1060,6 +1071,23 @@ input:focus, select:focus {
 .random-picks-item.drag-over {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px var(--primary), var(--shadow-card);
+}
+
+.zoomable-image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--photo-bg);
+}
+
+.zoomable-image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .random-picks-item img {

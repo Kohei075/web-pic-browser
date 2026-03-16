@@ -41,10 +41,17 @@ export const PhotoViewer = forwardRef<PhotoViewerHandle, PhotoViewerProps>(funct
     setPosition({ x: 0, y: 0 });
   }, []);
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    if (e.deltaY < 0) handleZoomIn();
-    else handleZoomOut();
+  // Use native event listener with { passive: false } to allow preventDefault()
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.deltaY < 0) handleZoomIn();
+      else handleZoomOut();
+    };
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => container.removeEventListener('wheel', onWheel);
   }, [handleZoomIn, handleZoomOut]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -97,7 +104,7 @@ export const PhotoViewer = forwardRef<PhotoViewerHandle, PhotoViewerProps>(funct
       <div
         className="photo-viewer-container"
         ref={containerRef}
-        onWheel={handleWheel}
+
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

@@ -1,6 +1,105 @@
-import { useRef, useState, useEffect, useCallback, useImperativeHandle, forwardRef } from 'react';
+import { useRef, useState, useEffect, useCallback, useImperativeHandle, forwardRef, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Photo } from '../../types';
 import { useTranslation } from '../../i18n/useTranslation';
+
+/** Per-image zoomable wrapper */
+function ZoomableImage({ photo, onClick }: { photo: Photo; onClick: () => void }) {
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const panStart = useRef({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleZoomIn = useCallback(() => {
+    setScale((s) => Math.min(s * 1.3, 5));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setScale((s) => {
+      const next = s / 1.3;
+      if (next <= 1) {
+        setPosition({ x: 0, y: 0 });
+        return 1;
+      }
+      return next;
+    });
+  }, []);
+
+  // Native wheel listener with { passive: false }
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.deltaY < 0) handleZoomIn();
+      else handleZoomOut();
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [handleZoomIn, handleZoomOut]);
+
+  const handlePointerDown = useCallback((e: ReactPointerEvent) => {
+    if (scale > 1) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsPanning(true);
+      panStart.current = { x: e.clientX - position.x, y: e.clientY - position.y };
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    }
+  }, [scale, position]);
+
+  const handlePointerMove = useCallback((e: ReactPointerEvent) => {
+    if (isPanning) {
+      setPosition({
+        x: e.clientX - panStart.current.x,
+        y: e.clientY - panStart.current.y,
+      });
+    }
+  }, [isPanning]);
+
+  const handlePointerUp = useCallback(() => {
+    setIsPanning(false);
+  }, []);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // Don't navigate if zoomed — only navigate at scale 1
+    if (scale > 1) {
+      e.stopPropagation();
+      return;
+    }
+    onClick();
+  }, [scale, onClick]);
+
+  // Reset zoom when photo changes
+  useEffect(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, [photo.id]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="zoomable-image-container"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onClick={handleClick}
+      style={{ cursor: scale > 1 ? (isPanning ? 'grabbing' : 'grab') : 'pointer' }}
+    >
+      <img
+        src={`/api/images/${photo.id}/full?v=${photo.modified_at}`}
+        alt={photo.file_name}
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+          transition: isPanning ? 'none' : 'transform 0.2s',
+        }}
+        draggable={false}
+      />
+    </div>
+  );
+}
 
 interface RandomPicksPanelProps {
   photos: Photo[];
@@ -125,13 +224,8 @@ export const RandomPicksPanel = forwardRef<RandomPicksPanelHandle, RandomPicksPa
             onDragOver={(e) => handleDragOver(e, index)}
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
-            onClick={() => onSelect(photo.id)}
           >
-            <img
-              src={`/api/images/${photo.id}/full?v=${photo.modified_at}`}
-              alt={photo.file_name}
-              draggable={false}
-            />
+            <ZoomableImage photo={photo} onClick={() => onSelect(photo.id)} />
           </div>
         ))}
       </div>
