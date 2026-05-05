@@ -38,7 +38,7 @@ const translations = {
   'viewer.random': { ja: 'ランダム', en: 'Random' },
   'viewer.fullscreen': { ja: '全画面表示', en: 'Fullscreen' },
   'viewer.exitFullscreen': { ja: '全画面解除', en: 'Exit Fullscreen' },
-  'viewer.randomPicks': { ja: '3枚ランダム表示', en: '3 Random Photos' },
+  'viewer.randomPicks': { ja: '4枚ランダム表示', en: '4 Random Photos' },
   'viewer.backToPhoto': { ja: '写真に戻る', en: 'Back to Photo' },
   'viewer.backToGallery': { ja: '戻る', en: 'Back to Gallery' },
   'viewer.openInExplorer': { ja: 'エクスプローラーで開く', en: 'Open in Explorer' },

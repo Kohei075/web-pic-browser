@@ -1008,11 +1008,12 @@ input:focus, select:focus {
 }
 
 .random-picks-grid-horizontal {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--rp-count, 1), 1fr);
 }
 
 .random-picks-grid-vertical {
   grid-template-columns: 1fr;
+  grid-template-rows: repeat(var(--rp-count, 1), 1fr);
 }
 
 .random-picks-layout-btn {

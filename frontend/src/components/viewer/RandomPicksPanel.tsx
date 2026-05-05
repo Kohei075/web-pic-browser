@@ -210,7 +210,10 @@ export const RandomPicksPanel = forwardRef<RandomPicksPanelHandle, RandomPicksPa
           &times;
         </button>
       </div>
-      <div className={`random-picks-grid random-picks-grid-${layout}`}>
+      <div
+        className={`random-picks-grid random-picks-grid-${layout}`}
+        style={{ '--rp-count': photos.length } as React.CSSProperties}
+      >
         {photos.map((photo, index) => (
           <div
             key={photo.id}

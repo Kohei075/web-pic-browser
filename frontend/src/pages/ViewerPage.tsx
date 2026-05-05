@@ -92,12 +92,12 @@ export function ViewerPage() {
     if (!photo) return;
     const params = new URLSearchParams({
       sort_by: 'random',
-      per_page: '4',
+      per_page: '5',
     });
     if (selectedFolderPath !== null) params.set('folder_path', selectedFolderPath);
     try {
       const res = await api.get<PhotoListResponse>(`/photos?${params}`);
-      const picks = res.items.filter((p) => p.id !== photo.id).slice(0, 3);
+      const picks = res.items.filter((p) => p.id !== photo.id).slice(0, 4);
       setRandomPicks(picks);
       setShowRandomPicks(true);
     } catch { /* ignore */ }

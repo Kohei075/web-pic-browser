@@ -10,7 +10,7 @@ interface PhotoCardProps {
 export function PhotoCard({ photo }: PhotoCardProps) {
   const { selectedPhotoIds, togglePhotoSelection } = useAppStore();
   const isSelected = selectedPhotoIds.includes(photo.id);
-  const isMaxed = selectedPhotoIds.length >= 3;
+  const isMaxed = selectedPhotoIds.length >= 4;
   const [failed, setFailed] = useState(false);
 
   const sep = photo.file_path.includes('/') ? '/' : '\\';

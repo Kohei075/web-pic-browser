@@ -13,7 +13,7 @@ export function FilterBar() {
   const handleRandomPicks = useCallback(async () => {
     const params = new URLSearchParams({
       sort_by: 'random',
-      per_page: '3',
+      per_page: '4',
     });
     if (selectedFolderPath !== null) params.set('folder_path', selectedFolderPath);
     try {

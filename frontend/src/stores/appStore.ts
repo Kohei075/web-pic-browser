@@ -19,7 +19,7 @@ interface AppState {
   // Viewer
   currentPhotoId: number | null;
 
-  // Photo selection (up to 3)
+  // Photo selection (up to 4)
   selectedPhotoIds: number[];
   selectedPhotos: Photo[];
 
@@ -108,7 +108,7 @@ export const useAppStore = create<AppState>((set) => ({
           selectedPhotos: state.selectedPhotos.filter((p) => p.id !== photo.id),
         };
       }
-      if (state.selectedPhotoIds.length >= 3) return state;
+      if (state.selectedPhotoIds.length >= 4) return state;
       return {
         selectedPhotoIds: [...state.selectedPhotoIds, photo.id],
         selectedPhotos: [...state.selectedPhotos, photo],
