@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../../api/client';
 import { useAppStore } from '../../stores/appStore';
+import { usePhotos } from '../../hooks/usePhotos';
 import { useTranslation } from '../../i18n/useTranslation';
 import type { PhotoListResponse } from '../../types';
 
@@ -18,6 +19,7 @@ export function ScanButton({ rootFolder, onStartScan, onPollStatus, onReset }: S
   const [resetting, setResetting] = useState(false);
   const [resetDone, setResetDone] = useState(false);
   const pollRef = useRef<number | null>(null);
+  const { fetchPhotos } = usePhotos();
   const { t } = useTranslation();
 
   const fetchPhotoCount = async () => {
@@ -59,6 +61,7 @@ export function ScanButton({ rootFolder, onStartScan, onPollStatus, onReset }: S
           setScanning(false);
           if (pollRef.current) clearInterval(pollRef.current);
           fetchPhotoCount();
+          fetchPhotos(1, false);
         }
       }, 1000);
     }
