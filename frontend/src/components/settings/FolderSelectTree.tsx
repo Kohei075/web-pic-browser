@@ -92,9 +92,11 @@ function FolderCheckItem({
   );
 }
 
-function getLeafPaths(node: FolderNode): string[] {
-  if (node.children.length === 0) return [node.path];
-  return node.children.flatMap(getLeafPaths);
+function getSelectedTargets(node: FolderNode, excluded: Set<string>): string[] {
+  if (excluded.has(node.path)) {
+    return node.children.flatMap((c) => getSelectedTargets(c, excluded));
+  }
+  return [node.path];
 }
 
 export function FolderSelectTree({ rootFolder, extensions }: FolderSelectTreeProps) {
@@ -171,16 +173,15 @@ export function FolderSelectTree({ rootFolder, extensions }: FolderSelectTreePro
   };
 
   const handleRescan = async () => {
-    // Collect leaf folder paths that are not excluded
-    const selectedLeaves = folders
-      .flatMap(getLeafPaths)
-      .filter((p) => !excluded.has(p));
-    if (selectedLeaves.length === 0) return;
+    // Top-most non-excluded subtrees. The backend walks recursively and applies
+    // excluded_folders to skip descendants the user has unchecked.
+    const targets = folders.flatMap((n) => getSelectedTargets(n, excluded));
+    if (targets.length === 0) return;
 
     setRescanning(true);
     setRescanResult(null);
     try {
-      await api.post('/scan/partial', { folders: selectedLeaves });
+      await api.post('/scan/partial', { folders: targets });
       // Poll scan status until done
       const poll = async () => {
         const status = await api.get<{
