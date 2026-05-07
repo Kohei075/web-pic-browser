@@ -32,7 +32,12 @@ def photo_to_response(photo: Photo) -> PhotoResponse:
     )
 
 
-def build_query(db: Session, favorite_only: bool = False, folder_path: Optional[str] = None):
+def build_query(
+    db: Session,
+    favorite_only: bool = False,
+    folder_path: Optional[str] = None,
+    include_subfolders: bool = True,
+):
     query = db.query(Photo)
     if favorite_only:
         query = query.filter(Photo.is_favorite == 1)
@@ -41,6 +46,9 @@ def build_query(db: Session, favorite_only: bool = False, folder_path: Optional[
         if not prefix.endswith(os.sep):
             prefix += os.sep
         query = query.filter(Photo.file_path.like(prefix + "%"))
+        if not include_subfolders:
+            # Exclude paths that have an extra path separator after the prefix
+            query = query.filter(~Photo.file_path.like(prefix + "%" + os.sep + "%"))
     return query
 
 
@@ -52,9 +60,10 @@ def get_photos(
     sort_order: str = Query("desc"),
     favorite_only: bool = Query(False),
     folder_path: Optional[str] = Query(None),
+    include_subfolders: bool = Query(True),
     db: Session = Depends(get_db),
 ):
-    query = build_query(db, favorite_only, folder_path)
+    query = build_query(db, favorite_only, folder_path, include_subfolders)
     total = query.count()
 
     sort_column_map = {
@@ -89,9 +98,10 @@ def get_photos(
 def get_random_photo(
     favorite_only: bool = Query(False),
     folder_path: Optional[str] = Query(None),
+    include_subfolders: bool = Query(True),
     db: Session = Depends(get_db),
 ):
-    query = build_query(db, favorite_only, folder_path)
+    query = build_query(db, favorite_only, folder_path, include_subfolders)
     photo = query.order_by(func.random()).first()
     if not photo:
         raise HTTPException(status_code=404, detail="No photos found")
@@ -113,6 +123,7 @@ def get_neighbors(
     sort_order: str = Query("desc"),
     favorite_only: bool = Query(False),
     folder_path: Optional[str] = Query(None),
+    include_subfolders: bool = Query(True),
     db: Session = Depends(get_db),
 ):
     sort_column_map = {
@@ -127,7 +138,7 @@ def get_neighbors(
     if not current:
         raise HTTPException(status_code=404, detail="Photo not found")
 
-    base_query = build_query(db, favorite_only, folder_path)
+    base_query = build_query(db, favorite_only, folder_path, include_subfolders)
     current_val = getattr(current, sort_by if sort_by in sort_column_map else "created_at")
 
     if sort_order == "desc":

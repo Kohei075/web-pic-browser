@@ -14,7 +14,7 @@ export function ViewerPage() {
   const { photoId } = useParams<{ photoId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { sortBy, sortOrder, selectedFolderPath, folderRoot, setSelectedFolderPath } = useAppStore();
+  const { sortBy, sortOrder, selectedFolderPath, includeSubfolders, folderRoot, setSelectedFolderPath } = useAppStore();
   const { t } = useTranslation();
 
   const [photo, setPhoto] = useState<Photo | null>(null);
@@ -46,7 +46,10 @@ export function ViewerPage() {
           sort_by: sortBy,
           sort_order: sortOrder,
         });
-        if (selectedFolderPath !== null) neighborParams.set('folder_path', selectedFolderPath);
+        if (selectedFolderPath !== null) {
+          neighborParams.set('folder_path', selectedFolderPath);
+          neighborParams.set('include_subfolders', includeSubfolders ? 'true' : 'false');
+        }
         const neighborsData = await api.get<NeighborsResponse>(`/photos/${id}/neighbors?${neighborParams}`);
         setNeighbors(neighborsData);
       }
@@ -55,7 +58,7 @@ export function ViewerPage() {
     } finally {
       setLoading(false);
     }
-  }, [sortBy, sortOrder, selectedFolderPath, navigate]);
+  }, [sortBy, sortOrder, selectedFolderPath, includeSubfolders, navigate]);
 
   // Fetch photo data
   useEffect(() => {

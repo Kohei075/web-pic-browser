@@ -77,7 +77,7 @@ function getSavedWidth(): number {
 }
 
 export function FolderSidebar() {
-  const { folderTree, folderRoot, setFolderTree, selectedFolderPath, setSelectedFolderPath, isSidebarOpen, setIsSidebarOpen } = useAppStore();
+  const { folderTree, folderRoot, setFolderTree, selectedFolderPath, setSelectedFolderPath, includeSubfolders, setIncludeSubfolders, isSidebarOpen, setIsSidebarOpen } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResponse['results']>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -225,6 +225,14 @@ export function FolderSidebar() {
           <button className="sidebar-clear-btn" onClick={() => handleFolderSelect(null)} disabled={!selectedFolderPath}>
             {t('sidebar.allPhotos')}
           </button>
+          <label className="sidebar-include-subfolders">
+            <input
+              type="checkbox"
+              checked={includeSubfolders}
+              onChange={(e) => setIncludeSubfolders(e.target.checked)}
+            />
+            <span>{t('sidebar.includeSubfolders')}</span>
+          </label>
           {folderRoot && (
             <div className="folder-tree-root" title={folderRoot}>
               {folderRoot.split(/[/\\]/).pop() || folderRoot}

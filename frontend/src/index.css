@@ -393,6 +393,22 @@ input:focus, select:focus {
   cursor: default;
 }
 
+.sidebar-include-subfolders {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 8px 8px;
+  padding: 4px 4px;
+  font-size: 0.8rem;
+  color: var(--text-secondary, var(--text));
+  cursor: pointer;
+  user-select: none;
+}
+
+.sidebar-include-subfolders input {
+  cursor: pointer;
+}
+
 .folder-tree-root {
   padding: 6px 12px;
   font-size: 0.8rem;

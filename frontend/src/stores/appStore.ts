@@ -30,6 +30,7 @@ interface AppState {
   folderTree: FolderNode[];
   folderRoot: string;
   selectedFolderPath: string | null;
+  includeSubfolders: boolean;
   isSidebarOpen: boolean;
 
   // Actions
@@ -46,6 +47,7 @@ interface AppState {
   resetFilters: () => void;
   setFolderTree: (root: string, folders: FolderNode[]) => void;
   setSelectedFolderPath: (path: string | null) => void;
+  setIncludeSubfolders: (include: boolean) => void;
   setIsSidebarOpen: (open: boolean) => void;
   togglePhotoSelection: (photo: Photo) => void;
   clearPhotoSelection: () => void;
@@ -74,6 +76,7 @@ export const useAppStore = create<AppState>((set) => ({
   folderTree: [],
   folderRoot: '',
   selectedFolderPath: null,
+  includeSubfolders: localStorage.getItem('include_subfolders') !== '0',
   isSidebarOpen: true,
 
   setPhotos: (photos, total, page, perPage, totalPages) =>
@@ -99,6 +102,10 @@ export const useAppStore = create<AppState>((set) => ({
   resetFilters: () => set({ selectedFolderPath: null, photos: [], page: 1 }),
   setFolderTree: (folderRoot, folderTree) => set({ folderRoot, folderTree }),
   setSelectedFolderPath: (selectedFolderPath) => set({ selectedFolderPath, photos: [], page: 1 }),
+  setIncludeSubfolders: (includeSubfolders) => {
+    localStorage.setItem('include_subfolders', includeSubfolders ? '1' : '0');
+    set({ includeSubfolders, photos: [], page: 1 });
+  },
   setIsSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
   togglePhotoSelection: (photo) =>
     set((state) => {

@@ -11,12 +11,12 @@ export function PhotoGrid() {
   const observerRef = useRef<HTMLDivElement>(null);
   const initialFetchDone = useRef(false);
 
-  const { sortBy, sortOrder, selectedFolderPath, randomKey, gridColumns } = useAppStore();
+  const { sortBy, sortOrder, selectedFolderPath, includeSubfolders, randomKey, gridColumns } = useAppStore();
   const { t } = useTranslation();
 
   useEffect(() => {
     initialFetchDone.current = false;
-  }, [sortBy, sortOrder, selectedFolderPath, randomKey]);
+  }, [sortBy, sortOrder, selectedFolderPath, includeSubfolders, randomKey]);
 
   useEffect(() => {
     if (!initialFetchDone.current) {
@@ -28,7 +28,7 @@ export function PhotoGrid() {
       initialFetchDone.current = true;
       fetchPhotos(1);
     }
-  }, [fetchPhotos, sortBy, sortOrder, selectedFolderPath, randomKey, photos.length]);
+  }, [fetchPhotos, sortBy, sortOrder, selectedFolderPath, includeSubfolders, randomKey, photos.length]);
 
   const handleIntersect = useCallback(
     (entries: IntersectionObserverEntry[]) => {

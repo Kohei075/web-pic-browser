@@ -29,6 +29,7 @@ const translations = {
   'sidebar.searching': { ja: '検索中...', en: 'Searching...' },
   'sidebar.noResults': { ja: '結果なし', en: 'No results' },
   'sidebar.allPhotos': { ja: 'すべての写真', en: 'All Photos' },
+  'sidebar.includeSubfolders': { ja: '配下フォルダの写真も表示', en: 'Include subfolders' },
   'sidebar.noFolders': { ja: 'スキャン済みフォルダなし', en: 'No folders scanned' },
   'sidebar.collapseAll': { ja: 'すべて閉じる', en: 'Collapse All' },
 
