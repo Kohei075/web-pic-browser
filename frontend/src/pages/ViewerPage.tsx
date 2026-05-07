@@ -186,14 +186,29 @@ export function ViewerPage() {
           </span>
         )}
         {!showRandomPicks && (
-          <button
-            className="btn btn-sm"
-            onClick={async () => {
-              try { await api.post(`/images/${photo.id}/reveal`); } catch { /* ignore */ }
-            }}
-          >
-            {t('viewer.openInExplorer')}
-          </button>
+          <>
+            <button
+              className="btn btn-sm"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(photo.file_path);
+                  alert(t('viewer.copyPathSuccess'));
+                } catch {
+                  alert(t('viewer.copyPathFailed'));
+                }
+              }}
+            >
+              {t('viewer.copyPath')}
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={async () => {
+                try { await api.post(`/images/${photo.id}/reveal`); } catch { /* ignore */ }
+              }}
+            >
+              {t('viewer.openInExplorer')}
+            </button>
+          </>
         )}
       </div>
 
