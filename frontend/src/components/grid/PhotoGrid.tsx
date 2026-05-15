@@ -47,6 +47,18 @@ export function PhotoGrid() {
     return () => observer.disconnect();
   }, [handleIntersect]);
 
+  // Restore scroll position to last viewed photo when returning from viewer
+  useEffect(() => {
+    const id = useAppStore.getState().lastViewedPhotoId;
+    if (id == null || photos.length === 0) return;
+    if (!photos.some((p) => p.id === id)) return;
+    const el = document.querySelector(`[data-photo-id="${id}"]`);
+    if (el) {
+      el.scrollIntoView({ block: 'center', behavior: 'auto' });
+      useAppStore.getState().setLastViewedPhotoId(null);
+    }
+  }, [photos]);
+
   if (photos.length === 0 && isLoadingPhotos) {
     return <LoadingSpinner message={t('grid.loading')} />;
   }

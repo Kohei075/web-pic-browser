@@ -8,7 +8,7 @@ interface PhotoCardProps {
 }
 
 export function PhotoCard({ photo }: PhotoCardProps) {
-  const { selectedPhotoIds, togglePhotoSelection } = useAppStore();
+  const { selectedPhotoIds, togglePhotoSelection, setLastViewedPhotoId } = useAppStore();
   const isSelected = selectedPhotoIds.includes(photo.id);
   const isMaxed = selectedPhotoIds.length >= 4;
   const [failed, setFailed] = useState(false);
@@ -21,7 +21,12 @@ export function PhotoCard({ photo }: PhotoCardProps) {
   if (failed) return null;
 
   return (
-    <Link to={`/viewer/${photo.id}`} className={`photo-card${isSelected ? ' photo-card-selected' : ''}`}>
+    <Link
+      to={`/viewer/${photo.id}`}
+      className={`photo-card${isSelected ? ' photo-card-selected' : ''}`}
+      data-photo-id={photo.id}
+      onClick={() => setLastViewedPhotoId(photo.id)}
+    >
       <div className="photo-card-image">
         <div
           className="photo-select-area"

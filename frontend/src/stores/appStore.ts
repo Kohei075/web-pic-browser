@@ -19,6 +19,9 @@ interface AppState {
   // Viewer
   currentPhotoId: number | null;
 
+  // Last viewed photo id (for restoring scroll position when returning to grid)
+  lastViewedPhotoId: number | null;
+
   // Photo selection (up to 4)
   selectedPhotoIds: number[];
   selectedPhotos: Photo[];
@@ -51,6 +54,7 @@ interface AppState {
   setIsSidebarOpen: (open: boolean) => void;
   togglePhotoSelection: (photo: Photo) => void;
   clearPhotoSelection: () => void;
+  setLastViewedPhotoId: (id: number | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -67,6 +71,8 @@ export const useAppStore = create<AppState>((set) => ({
   gridColumns: Number(localStorage.getItem('grid_columns')) || 4,
 
   currentPhotoId: null,
+
+  lastViewedPhotoId: null,
 
   selectedPhotoIds: [],
   selectedPhotos: [],
@@ -122,4 +128,5 @@ export const useAppStore = create<AppState>((set) => ({
       };
     }),
   clearPhotoSelection: () => set({ selectedPhotoIds: [], selectedPhotos: [] }),
+  setLastViewedPhotoId: (lastViewedPhotoId) => set({ lastViewedPhotoId }),
 }));
